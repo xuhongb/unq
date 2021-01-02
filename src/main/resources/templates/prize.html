@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <title>优趣汇十周年庆祝年会</title>
+    <base th:href="${#request.getContextPath()}+'/'">
+
+</head>
+<style>
+    *{ margin: 0;padding: 0;}
+    body{background: #99CCFF; overflow: hidden;}
+    .button {
+        background-color: #FF1493;; /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+    }
+    .button1 {
+        background-color: #2F4F4F;; /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+    }
+    .button3 {
+        background-color: #000000;; /* Green */
+        border: none;
+        color: white;
+        padding: 2px 2px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 6px;
+        margin: 4px 2px;
+        cursor: pointer;
+    }
+</style>
+<body>
+<div style="margin-top: 40px;margin-left: 50px">
+    <button id="clearId" class="button3" onclick="clearOnclick();">删除所有签到信息</button>
+    <p>请谨慎操作，数据无法恢复</p>
+</div>
+<div style="margin-top: 40px;margin-left: 50px;float: left">
+    <button id="enterPartyId" class="button1" onclick="enterPartyOnclick();">进入签到状态</button>
+</div>
+<div style="margin-top: 40px;margin-left: 50px">
+    <button id="enterPrizeId" class="button1" onclick="enterPrizeOnclick();">进入抽奖状态</button>
+</div>
+<div style="margin-top: 40px;margin-left: 50px;float: left">
+    <button id="openPrizeId" class="button" onclick="openPrizeOnclick();">开始抽奖</button>
+</div>
+<div style="margin-top: 40px;margin-left: 50px">
+    <button id="closePrizeId" class="button" onclick="closePrizeOnclick();">暂停</button>
+</div>
+<div style="margin-top: 40px;margin-left: 50px">
+    <button id="okPrizeId" class="button" onclick="okPrizeOnclick();">中奖人员归零</button>
+</div>
+
+<script th:src="@{ js/jquery-1.7.1.min.js}" type="text/javascript"></script>
+<script type="text/javascript">
+
+
+    function enterPartyOnclick(){
+        //进入签到状态
+        $.ajax({
+            url: "/unq/prize/updateStatus",
+            async: true,
+            type: "POST",
+            //dataType: "json",
+            data: {
+                "id":"1",
+                "status":1
+            },
+            error: function () {
+                alert("服务器异常，请稍后重试..");
+            },
+            success: function (response1) {
+                console.log(response1)
+            }
+        });
+    }
+    function enterPrizeOnclick(){
+
+        //进入抽奖状态
+        $.ajax({
+            url: "/unq/prize/updateStatus",
+            async: true,
+            type: "POST",
+            //dataType: "json",
+            data: {
+                "id":"1",
+                "status":2
+            },
+            error: function () {
+                alert("服务器异常，请稍后重试..");
+            },
+            success: function (response1) {
+                console.log(response1)
+            }
+        });
+    }
+    function openPrizeOnclick(){
+        $.ajax({
+            url: "/unq/prize/status",
+            type: "GET",
+            error: function () {
+                alert("服务器异常，请稍后重试..");
+            },
+            success: function (response1) {
+                if(response1.status ==1){
+                    alert("请先进入抽奖状态！");
+                }else {
+                    //开始抽奖
+                    $.ajax({
+                        url: "/unq/prize/updateStatus",
+                        async: true,
+                        type: "POST",
+                        //dataType: "json",
+                        data: {
+                            "id":"1",
+                            "status":3
+                        },
+                        error: function () {
+                            alert("服务器异常，请稍后重试..");
+                        },
+                        success: function (response1) {
+                            console.log(response1)
+                        }
+                    });
+                }
+            }
+        });
+
+    }
+    function closePrizeOnclick(){
+        $.ajax({
+            url: "/unq/prize/status",
+            type: "GET",
+            error: function () {
+                alert("服务器异常，请稍后重试..");
+            },
+            success: function (response1) {
+                if (response1.status ==3) {
+                    //暂停
+                    $.ajax({
+                        url: "/unq/prize/updateStatus",
+                        async: true,
+                        type: "POST",
+                        //dataType: "json",
+                        data: {
+                            "id":"1",
+                            "status":4
+                        },
+                        error: function () {
+                            alert("服务器异常，请稍后重试..");
+                        },
+                        success: function (response1) {
+                            console.log(response1)
+                        }
+                    });
+                }else {
+                    alert("请先开始抽奖！");
+                }
+            }
+        });
+
+    }
+    function okPrizeOnclick(){
+        //中奖人员归零
+        $.ajax({
+            url: "/unq/prize/updateStatus",
+            async: true,
+            type: "POST",
+            //dataType: "json",
+            data: {
+                "id":"1",
+                "status":5
+            },
+            error: function () {
+                alert("服务器异常，请稍后重试..");
+            },
+            success: function (response1) {
+                console.log(response1)
+                if (response1=="success"){
+                    alert("中奖人员已加入抽奖队列");
+                }else {
+                    alert("操作失败");
+                }
+            }
+        });
+    }
+    function clearOnclick(){
+
+        $.ajax({
+            url: "/unq/user/clear",
+            type: "GET",
+            //dataType: "json",
+            data: {
+            },
+            error: function () {
+                alert("服务器异常，请稍后重试..");
+            },
+            success: function (response1) {
+                console.log(response1)
+                if (response1=="success"){
+                    alert("删除成功");
+                }else {
+                    alert("删除失败");
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

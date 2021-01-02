@@ -1,0 +1,570 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>优趣汇十周年庆祝年会</title>
+    <base th:href="${#request.getContextPath()}+'/'">
+    <link rel="stylesheet" th:href="@{/static/css/index.css}" media="all">
+    <link rel="stylesheet" th:href="@{/static/css/style.css}" media="all">
+</head>
+
+<style>
+*{ margin: 0;padding: 0;}
+body{background: #99CCFF; overflow: hidden;}
+
+</style>
+
+<body>
+<div id="divName" class="prizeClass">
+    <div id="starId">
+
+    </div>
+</div>
+<div id="prizeName" class="divClassName">
+
+</div>
+<script th:src="@{ /static/js/jquery-1.7.1.min.js}" type="text/javascript"></script>
+<script th:src="@{ /static/js/firework.js}" type="text/javascript"></script>
+<script type="text/javascript">
+    var screenW=document.documentElement.clientWidth*0.74;
+    var offsetXVa = screenW*0.26
+    var screenH=document.documentElement.clientHeight-20;
+    var userNum = 1;
+    var divNum = 1;
+    var maxId = 0;
+    var openEnterPartyInterval = null;
+    var currStatus = 1;
+    var prizeMap = new Map();
+    var nodeMap = new Map();
+    $(window).resize(function(){
+
+        resizeContainer();
+    });
+    function resizeContainer(){
+        window.location.reload();
+        screenW=document.documentElement.clientWidth*0.74;
+        offsetXVa = screenW*0.26
+        screenH=document.documentElement.clientHeight-20;
+        if (openEnterPartyInterval !=null){
+            clearInterval(openEnterPartyInterval)
+            openEnterPartyInterval = null;
+        }
+        $("#starId"+divNum).empty();
+        $("#starId"+divNum).html("");
+        document.getElementById("starId"+divNum).innerHTML="";
+        $("#starId"+divNum).remove();
+        userNum = 1;
+        prizeMap.clear();
+        nodeMap.clear();
+        if (currStatus ==1){
+            drawParty();
+        }else{
+            drawPrizeParty();
+        }
+    }
+    function resizeContainer2(){
+        screenW=document.documentElement.clientWidth*0.74;
+        offsetXVa = screenW*0.26
+        screenH=document.documentElement.clientHeight-20;
+        if (openEnterPartyInterval !=null){
+            clearInterval(openEnterPartyInterval)
+            openEnterPartyInterval = null;
+        }
+        $("#starId"+divNum).empty();
+        $("#starId"+divNum).html("");
+        document.getElementById("starId"+divNum).innerHTML="";
+        $("#starId"+divNum).remove();
+        userNum = 1;
+        prizeMap.clear();
+        nodeMap.clear();
+        if (currStatus ==1){
+            drawParty();
+        }else{
+            drawPrizeParty();
+        }
+    }
+    jQuery(document).ready(function () {
+        $("#prizeName").hide();
+        $.ajax({
+            url: "/unq/prize/status",
+            type: "GET",
+            error: function () {
+                alert("服务器异常，请稍后重试..");
+            },
+            success: function (response1) {
+                if(response1.status ==1){
+                    drawParty();
+                }else{
+                    currStatus = response1.status;
+                    drawPrizeParty();
+                }
+            }
+        });
+
+    });
+    function drawParty(){
+
+        divNum = divNum+1;
+        var  idVaaaa = "starId"+divNum;
+        var strdiv = '<div id=' + idVaaaa+'></div>';
+        $("#divName").html(strdiv);
+        maxId = 0;
+        //testAunnalParty();
+        $.ajax({
+            url: "/unq/user/listLast/0",
+            type: "GET",
+            error: function () {
+                alert("服务器异常，请稍后重试..");
+            },
+            success: function (response) {
+                if (response !=null){
+                    maxId = response.lastId;
+                    enteredAunnalParty(response.list,divNum);
+                    selectParty();
+                }
+
+            }
+        });
+    }
+    function enteredAunnalParty(list,divIndex){
+        var rx = document.documentElement.clientWidth/2;
+        var ry = document.documentElement.clientHeight/2;
+        for (var i = 0; i < list.length; i++)
+        {
+            var node = new Object();
+            node = list[i];
+            createNode(node,userNum,false,false,divIndex);
+            userNum++;
+        }
+    }
+
+    function createNode(node,index,flag,postion,divIndex){
+        var span=document.createElement(flag?"span1" : "span2");//创建一个span
+        document.getElementById("starId"+divIndex).appendChild(span);
+
+        //var t= Math.random();
+        //var rrr = Math.sqrt(t)*(screenH/2);
+        //var radin = Math.random()*2*Math.PI;
+        //var x=rrr*Math.cos(radin)*(Math.random() < 0.5 ? -1 : 1)+rx;
+        //var y=rrr*Math.sin(radin)*(Math.random() < 0.5 ? -1 : 1)+ry;
+
+
+        //var x=parseInt(Math.random()*(screenH/2))*(Math.random() < 0.5 ? -1 : 1)+rx;
+        //var y=parseInt(Math.random()*(screenH/2))*(Math.random() < 0.5 ? -1 : 1)+ry;
+        var divIddd = "userId"+index;
+        span.id = "userId"+index;
+        span.name = "userId"+index;
+        if (postion){
+            span.style.left=node.x+"px";
+            span.style.top=node.y+"px";
+        }else {
+            var x=parseInt(Math.random()*screenW)+offsetXVa;
+            var y=parseInt(Math.random()*screenH);
+            span.style.left=x+"px";
+            span.style.top=y+"px";
+        }
+
+        if(index%2==0){
+            span.style.backgroundImage ='url("/unq/static/img/sphere6.png")';
+        }else {
+            span.style.backgroundImage ='url("/unq/static/img/spheres6.png")';
+        }
+        span.style.textAlign = 'right';
+        span.style.color= '#ffffff';
+        span.style.fontSize='20px';
+        span.innerHTML = '<p style=\'margin-top: -20px;margin-left:-50px;width: 140px;text-align: center\'>'+node.lastName+node.firstName+'</p>';
+
+        var scaleSize=Math.random()*0.4
+        node.scaleSize = scaleSize;
+        span.style.transform="scale("+scaleSize+","+scaleSize+")";
+
+        //动画延迟闪烁
+        var scale=Math.random()*1
+        //span.style.animationDelay=scale+"s";
+        span.style.animationDelay=scale+"s";
+        nodeMap.set(divIddd ,node);
+    }
+
+    function openEnterParty(){
+        openEnterPartyInterval =setInterval("getEnterPartyData()",1000);
+    }
+
+    function getEnterPartyData(){
+        if (maxId >0){
+            $.ajax({
+                url: "/unq/user/listLast/"+maxId,
+                type: "GET",
+                error: function () {
+                    alert("服务器异常，请稍后重试..");
+                },
+                success: function (response1) {
+                    if (response1 !=null){
+                        maxId = response1.lastId;
+                        //enterAunnalParty(response1.list,divNum);
+                        var i=0;
+                        for (i = 0; i < response1.list.length; i++) {
+                            var node = new Object();
+                            node = response1.list[i];
+                            enterAunnalParty(node,divNum);
+                        }
+                    }
+                }
+            });
+        }
+
+    }
+    function enterAunnalParty(node,divIndex){
+
+            var span=document.createElement("span2");//创建一个span
+            document.getElementById("starId"+divIndex).appendChild(span);
+
+
+            var x=parseInt(Math.random()*screenW)+offsetXVa;
+            var y=parseInt(Math.random()*screenH);
+            node.x = x;
+            node.y = y;
+            node.index = userNum;
+            var idVa = "userId"+userNum;
+            span.id = idVa;
+            span.name = idVa;
+            userNum++;
+            span.style.left=x+"px";
+            span.style.top=y+"px";
+            if(userNum%2==0){
+                span.style.backgroundImage ='url("/unq/static/img/sphere6.png")';
+            }else {
+                span.style.backgroundImage ='url("/unq/static/img/spheres6.png")';
+            }
+            span.style.textAlign = 'right';
+            span.style.color= '#ffffff';
+            span.style.fontSize='20px';
+            span.innerHTML = '<p style=\'margin-top: -20px;margin-left:-50px;width: 140px;text-align: center\'>'+node.lastName+node.firstName+'</p>';
+
+            var  startScale=3;//Math.random()*5
+            var  endScale=Math.random()*0.4;
+            node.scaleSize = endScale;
+            span.style.transform="scale("+startScale+","+startScale+")";
+
+            //动画延迟闪烁
+            //span.style.animationDelay=scale+"s";
+            span.style.animationDelay=6+"s";
+            nodeMap.set(idVa ,node);
+            var startFlag = 1;
+            node.userEnterInter =setInterval(function (){
+                changeNameStyle(node,idVa,startFlag,endScale);
+                startFlag++;
+            },100);
+            setTimeout(function (){
+                clearInterval(node.userEnterInter);
+                //$("#"+idVa).remove();
+                //createNode(node,node.index,false,true,divNum)
+            },6000)
+    }
+    function changeNameStyle(node,id,startFlag,endScale){
+        var span1 = $("#"+id);
+        //createNode(node,node.index,false,true)
+        //span1.css("transform","scale(0.6,0.6)");
+        //var html = span1.get(0).outerHTML;
+        //html = html.replaceAll("span1","span2");
+        //span1.replaceWith(html);
+        var scaleVaa = 3;
+        if (startFlag ==1){
+            scaleVaa = 3
+        }else if (startFlag ==2){
+            scaleVaa = 2;
+        }else if (startFlag ==3){
+            scaleVaa = 3;
+        }else if (startFlag ==4){
+            scaleVaa = 2;
+        }else {
+            scaleVaa = 3-(startFlag-4)*0.05;
+            if (scaleVaa<endScale){
+                scaleVaa = endScale;
+            }
+        }
+        span1.css("transform","scale("+scaleVaa+","+scaleVaa+")");
+    }
+
+    //准备抽奖
+    function drawPrizeParty(){
+        divNum = divNum+1;
+        var  idVaaaa = "starId"+divNum;
+        var strdiv = '<div id=' + idVaaaa+'></div>';
+        $("#divName").html(strdiv);
+        maxId = 0;
+        //testAunnalParty();
+        $.ajax({
+            url: "/unq/prize/listLast/0",
+            type: "GET",
+            error: function () {
+                alert("服务器异常，请稍后重试..");
+            },
+            success: function (response) {
+                maxId = response.lastId;
+                enteredPrizeAunnalParty(response.list,divNum);
+                selectParty();
+            }
+        });
+    }
+    function enteredPrizeAunnalParty(list,divIndex){
+        var rx = document.documentElement.clientWidth/2;
+        var ry = document.documentElement.clientHeight/2;
+        for (var i = 0; i < list.length; i++)
+        {
+            var nodeVa = new Object();
+            node = list[i];
+            var span=document.createElement("span");//创建一个span
+            document.getElementById("starId"+divIndex).appendChild(span);
+
+            //var t= Math.random();
+            //var rrr = Math.sqrt(t)*(screenH/2);
+            //var radin = Math.random()*2*Math.PI;
+            //var x=rrr*Math.cos(radin)*(Math.random() < 0.5 ? -1 : 1)+rx;
+            //var y=rrr*Math.sin(radin)*(Math.random() < 0.5 ? -1 : 1)+ry;
+
+            var x=parseInt(Math.random()*screenW)+offsetXVa;
+            var y=parseInt(Math.random()*screenH);
+
+            //var x=parseInt(Math.random()*(screenH/2))*(Math.random() < 0.5 ? -1 : 1)+rx;
+            //var y=parseInt(Math.random()*(screenH/2))*(Math.random() < 0.5 ? -1 : 1)+ry;
+            var idva = "userId"+userNum;
+            span.id = "userId"+userNum;
+            span.name = list[i].phone;
+            userNum++;
+            span.style.left=x+"px";
+            span.style.top=y+"px";
+            //if(userNum%2==0){
+             //   span.style.backgroundImage ='url("/unq/static/img/sphere6.png")';
+            //}else {
+                span.style.backgroundImage ='url("/unq/static/img/spheres6.png")';
+            //}
+            span.style.textAlign = 'right';
+            span.style.color= '#ffffff';
+            span.style.fontSize='20px';
+            span.innerHTML = '<p style=\'margin-top: -20px;margin-left:-50px;width: 140px;text-align: center\'>'+list[i].lastName+list[i].firstName+'</p>';
+
+            var scale=Math.random()*0.4;
+            nodeVa.scaleSize = scale;
+            span.style.transform="scale("+scale+","+scale+")";
+
+            //动画延迟闪烁
+            //span.style.animationDelay=scale+"s";
+            span.style.animationDelay=0+"s";
+            nodeMap.set(idva,nodeVa);
+
+        }
+    }
+
+    function openPrizeEnterParty(){
+        openEnterPartyInterval= setInterval("getPrizeEnterPartyData()",1000);
+    }
+    function selectParty(){
+        if(currStatus ==1){
+            setTimeout("openEnterParty()",1000);
+        }else {
+            setTimeout("openPrizeEnterParty()",1000);
+        }
+    }
+
+    function getPrizeEnterPartyData(){
+        if (maxId >0){
+            $.ajax({
+                url: "/unq/prize/listLast/"+maxId,
+                type: "GET",
+                error: function () {
+                    alert("服务器异常，请稍后重试..");
+                },
+                success: function (response1) {
+                    maxId = response1.lastId;
+                    enteredPrizeAunnalParty(response1.list,divNum);
+                }
+            });
+        }
+
+    }
+
+
+    //随机值
+    let lastRandomNum =0;
+
+    function openStarStyle(){
+        var randomNum = Math.floor(Math.random() * (userNum -1)) +1;
+        lastRandomNum = randomNum;
+        console.log(lastRandomNum)
+        var openSpan = $("#userId"+randomNum);
+        var iddd = "userId"+randomNum;
+        var curNode = nodeMap.get(iddd);
+        openSpan.css("background-image","url('/unq/static/img/sphere6.png')");
+        var currScale = curNode.scaleSize *5;
+        openSpan.css("transform","scale("+currScale+","+currScale+")");
+        setTimeout(function (){
+            closeStarStyle(randomNum)
+        },100);
+    }
+    function closeStarStyle(id){
+        var closeSpan = $("#userId"+id);
+        closeSpan.css("background-image","url('/unq/static/img/spheres6.png')");
+        var iddd = "userId"+id;
+        var curNode = nodeMap.get(iddd);
+        var currScale = curNode.scaleSize;
+        closeSpan.css("transform","scale("+currScale+","+currScale+")");
+        //closeSpan.css("transform","scale(0.4,0.4)");
+    }
+    function openAunnal(){
+        setInterval("openStarStyle()",100);
+    }
+   // setTimeout("openAunnal()",5000);
+
+    function prizeStyleChange(index,startVa){
+        var openSpan = $("#userId"+index);
+        if(startVa ==0){
+            openSpan.css("background-image","url('/unq/static/img/sphere6.png')");
+        }else {
+            var scaleVa = 0.4+startVa*0.1;
+            openSpan.css("transform","scale("+scaleVa+","+scaleVa+")")
+        }
+    }
+
+    setInterval("initData()",100);
+    let interval;
+    let startPrize = false;
+    function initData(){
+        $.ajax({
+            url: "/unq/prize/status",
+            type: "GET",
+            error: function () {
+                alert("服务器异常，请稍后重试..");
+            },
+            success: function (response1) {
+                if (response1 !=undefined && response1 !=null ){
+                    prizeStatus = response1.status
+                    if (response1.status == 4){
+                        //准备抽奖
+                        if (startPrize){
+
+                            startPrize = false;
+                            clearInterval(interval);
+                            if(prizeMap.get(lastRandomNum)!=undefined){
+                                var timeFlag =1;
+                                while (timeFlag){
+                                    let jia = lastRandomNum+timeFlag;
+                                    if(jia>0&& jia<userNum && prizeMap.get(jia)==undefined){
+                                        prizeMap.set(jia,jia);
+                                        lastRandomNum= jia;
+                                        break;
+                                    }
+                                    let jian = lastRandomNum-timeFlag;
+                                    if(jian>0&& jian<userNum &&prizeMap.get(jian)==undefined){
+                                        prizeMap.set(jian,jian);
+                                        lastRandomNum= jian;
+                                        break;
+                                    }
+                                    timeFlag++;
+                                }
+                            }else {
+                                prizeMap.set(lastRandomNum,lastRandomNum);
+                            }
+                            var openSpan = $("#userId"+lastRandomNum);
+                            let startVa =0
+                            let prizeInterval = setInterval(function (){
+                                prizeStyleChange(lastRandomNum,startVa);
+                                startVa++;
+                            },100)
+                            console.log(userNum+";"+lastRandomNum);
+                            console.log(openSpan[0].name);
+                            //FireworkShow();
+                            setTimeout(function (){
+                                clearInterval(prizeInterval);
+                                $("#starId"+divNum).hide();
+                                getUserByphone(openSpan[0].name,lastRandomNum);
+                                openSpan.remove();
+                            },2000)
+
+
+                            //$('body').append('<div class="light"></div>');
+                            /*setTimeout(function () {
+                                FireworkHide();
+                                /!*$(".light").animate({"opacity": "0"}, "slow", function () {
+                                    $(".light").remove();
+                                });*!/
+                            }, 5500);*/
+                        }
+                    }else if (response1.status == 3){
+                        //正在抽奖
+                        if (startPrize == false){
+                            $("#starId"+divNum).show();
+                            startPrize = true;
+                            $('#prizeName').hide();
+                            //slow
+                            /*$(".light").animate({"opacity": "0"}, "fast", function () {
+                                    $(".light").remove();
+                                });*/
+                            //开启年会抽奖
+                            interval =setInterval("openStarStyle()",70);
+                        }
+
+                    }else if (response1.status == 2){
+                        $("#starId"+divNum).show();
+                        if(currStatus ==1){
+                            currStatus =2;
+                            resizeContainer();
+                        }
+                        $('#prizeName').hide();
+                    }else if (response1.status == 1){
+                        $("#starId"+divNum).show();
+                        if(currStatus != 1){
+                            currStatus =1;
+                            resizeContainer();
+                        }
+                        $('#prizeName').hide();
+                    }else if (response1.status == 5){
+                        $("#starId"+divNum).show();
+                        if(currStatus == 1){
+                            currStatus =5;
+                            resizeContainer();
+                        }
+                        $('#prizeName').hide();
+                    }
+                }
+
+            }
+        });
+    }
+    //setInterval("openStarStyle()",3000);
+    function getUserByphone(phone,index){
+        $.ajax({
+            url: "/unq/prize/user/"+phone,
+            type: "GET",
+            error: function () {
+                alert("服务器异常，请稍后重试..");
+            },
+            success: function (response1) {
+                if (response1!=undefined &&response1 !=null){
+                    var straaa = '';
+                    if (index%2 ==1){
+                        straaa = 's';
+                    }
+                    let str = '<p style="padding-left:100px;font-size:24px;">恭喜！</p>'+
+                        '<div style="float: left;margin-right: 30px;"><img style="margin-top: 10px;" height="60px" width="60px" src="/unq/static/img/sphere6.png"></div>' +
+                        '<div style="float: left;"><p style="margin-top:20px;font-size:34px;">'+response1.lastName+response1.firstName+
+                        ' <de style="width:400px;font-size: 18px">('+response1.firstDept+' - '+response1.secondDept+')</de>'
+                        '</p></div>';
+                    $('#prizeName').show();
+                    $('#prizeName').html(''+str+ '</p>');
+                    //重置数据
+                    //resizeContainer();
+                }
+
+            }
+        });
+
+    }
+
+</script>
+
+<div style="text-align:center;margin:10px 0; font:normal 14px/24px 'MicroSoft YaHei';color:#ffffff">
+<p></p>
+<p></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.annual.mapper.UserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.annual.entity.User">
+        <id column="id" property="id" />
+        <result column="last_name" property="lastName" />
+        <result column="first_name" property="firstName" />
+        <result column="phone" property="phone" />
+        <result column="first_dept" property="firstDept" />
+        <result column="second_dept" property="secondDept" />
+        <result column="position" property="position" />
+        <result column="entry_time" property="entryTime" />
+        <result column="status" property="status" />
+        <result column="status1" property="status1" />
+        <result column="insert_date" property="insertDate" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, last_name, first_name, phone, first_dept, second_dept, position, entry_time,status, status1,insert_date
+    </sql>
+
+</mapper>

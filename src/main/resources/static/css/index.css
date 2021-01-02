@@ -1,0 +1,77 @@
+.enterClass{
+    position:fixed;
+    top:0;
+    left: 0;
+    width:100%;
+    height:100%;
+    z-index:-10;
+    zoom: 1;
+    background-color: #fff;
+    background: url(../img/qiandao.jpg) no-repeat;
+    background-size: cover;
+    -webkit-background-size: cover;
+    -o-background-size: cover;
+    background-position: center 0;
+}
+.prizeClass{
+    position:fixed;
+    top:0;
+    left: 0;
+    width:100%;
+    height:100%;
+    z-index:-10;
+    zoom: 1;
+    background-color: #fff;
+    background: url(../img/prize.jpg) no-repeat;
+    background-size: cover;
+    -webkit-background-size: cover;
+    -o-background-size: cover;
+    background-position: center 0;
+}
+span{width:30px; height:30px; position:absolute;background: url("../img/sphere.png") no-repeat; background-size: 100% 100%;
+    animation: show 0s alternate infinite }
+@keyframes show {
+    0%{opacity:0%;}
+    100%{opacity: 100%;}
+}
+span:hover{transform:scale(3,3) rotate(360deg) !important;transition: all 0s!important;}
+
+span1{width:30px; height:30px; position:absolute;background: url("../img/sphere.png") no-repeat; background-size: 100% 100%;
+    animation: mymove 10s linear reverse infinite }
+
+@keyframes mymove
+{
+    0%{
+        transform: scale(1);  /*开始为原始大小*/
+    }
+    25%{
+        transform: scale(1.1); /*放大1.1倍*/
+    }
+    50%{
+        transform: scale(1);
+    }
+    75%{
+        transform: scale(1.1);
+    }
+
+}
+span1:hover{transform:scale(3,3) rotate(360deg) !important;transition: all 1s!important;}
+span2{width:30px; height:30px; position:absolute;background: url("../img/sphere.png") no-repeat; background-size: 100% 100%;
+    animation: show 0.4s alternate infinite }
+
+span2:hover{transform:scale(3,3) rotate(360deg) !important;transition: all 1s!important;}
+
+.divClassName{
+    width: 700px;
+    height: 100px;
+    /*background-color: #d73c7f;*/
+    position: absolute;
+    color: #ffffff;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    text-align: left;
+    z-index: 99999;
+}

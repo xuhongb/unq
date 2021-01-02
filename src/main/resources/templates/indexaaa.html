@@ -1,0 +1,166 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>优趣汇十周年庆祝年会</title>
+    <base th:href="${#request.getContextPath()}+'/'">
+    <link rel="stylesheet" th:href="@{/static/css/index.css}" media="all">
+    <link rel="stylesheet" th:href="@{/static/css/style.css}" media="all">
+</head>
+
+<style>
+*{ margin: 0;padding: 0;}
+body{background: #99CCFF; overflow: hidden;}
+
+</style>
+
+<body id="bodyId" class="enterClass">
+    <!--<div id="aa" style="background: red;width: 300px;height: 150px">
+
+    </div>-->
+<div>
+
+</div>
+<script th:src="@{ /static/js/jquery-1.7.1.min.js}" type="text/javascript"></script>
+<script th:src="@{ /static/js/firework.js}" type="text/javascript"></script>
+<script type="text/javascript">
+    var screenW=document.documentElement.clientWidth-140;
+    var screenH=document.documentElement.clientHeight-180;
+
+    var userNum = 1;
+    $(window).resize(function(){
+
+        resizeContainer();
+    });
+    function resizeContainer(){
+        screenW=document.documentElement.clientWidth-140;
+        screenH=document.documentElement.clientHeight-180;
+        drawParty();
+    }
+    jQuery(document).ready(function () {
+
+        drawParty();
+    });
+    function drawParty(){
+        $("#bodyId").empty();
+        userNum = 1;
+        //testAunnalParty();
+        $.ajax({
+            url: "/unq/user/list/1",
+            type: "GET",
+            error: function () {
+                alert("服务器异常，请稍后重试..");
+            },
+            success: function (response) {
+                enteredAunnalParty(response);
+            }
+        });
+    }
+    function enteredAunnalParty(list){
+        var rx = document.documentElement.clientWidth/2;
+        var ry = document.documentElement.clientHeight/2;
+        for (var i = 0; i < list.length; i++)
+        {
+            createNode(list[i],userNum,false,false);
+            userNum++;
+        }
+    }
+
+    function createNode(node,index,flag,postion){
+        var span=document.createElement(flag?"span1" : "span2");//创建一个span
+        document.body.appendChild(span);
+
+        //var t= Math.random();
+        //var rrr = Math.sqrt(t)*(screenH/2);
+        //var radin = Math.random()*2*Math.PI;
+        //var x=rrr*Math.cos(radin)*(Math.random() < 0.5 ? -1 : 1)+rx;
+        //var y=rrr*Math.sin(radin)*(Math.random() < 0.5 ? -1 : 1)+ry;
+
+        var x=parseInt(Math.random()*screenW)+70;
+        var y=parseInt(Math.random()*screenH)+110;
+        if((x>screenW-150 )&& (y>screenH-140)){
+            x=parseInt(Math.random()*(screenW-150))+70;
+            y=parseInt(Math.random()*(screenH-140))+110;
+        }
+        if(flag ==true){
+            node.x = x;
+            node.y = y;
+        }
+
+        //var x=parseInt(Math.random()*(screenH/2))*(Math.random() < 0.5 ? -1 : 1)+rx;
+        //var y=parseInt(Math.random()*(screenH/2))*(Math.random() < 0.5 ? -1 : 1)+ry;
+        span.id = "userId"+index;
+        span.name = "userId"+index;
+        if (postion){
+            span.style.left=node.x+"px";
+            span.style.top=node.y+"px";
+        }else{
+            span.style.left=x+"px";
+            span.style.top=y+"px";
+        }
+
+        if(index%2==0){
+            span.style.backgroundImage ='url("/unq/static/img/sphere6.png")';
+        }else {
+            span.style.backgroundImage ='url("/unq/static/img/spheres6.png")';
+        }
+        span.style.textAlign = 'right';
+        span.style.color= '#ffffff';
+        span.style.fontSize='20px';
+        span.innerHTML = '<p style=\'margin-top: -20px;margin-left:-50px;width: 140px;text-align: center\'>'+node.lastName+node.firstName+'</p>';
+        if (flag ==true){
+            var scale=10;//Math.random()*5
+            span.style.transform="scale("+scale+","+scale+")";
+        }else {
+            var scale=Math.random()*1
+            span.style.transform="scale("+0.6+","+0.6+")";
+        }
+        //动画延迟闪烁
+        //span.style.animationDelay=scale+"s";
+        span.style.animationDelay=scale+"s";
+    }
+
+    function openEnterParty(){
+        setInterval("getEnterPartyData()",1000);
+    }
+    setTimeout("openEnterParty()",1000);
+    function getEnterPartyData(){
+        $.ajax({
+            url: "/unq/user/list/0",
+            type: "GET",
+            error: function () {
+                alert("服务器异常，请稍后重试..");
+            },
+            success: function (response1) {
+                enterAunnalParty(response1);
+            }
+        });
+    }
+    function enterAunnalParty(list){
+        var i=0;
+        for (i = 0; i < list.length; i++) {
+            var userIndexVa = userNum;
+            var nodeVa = list[i]
+            createNode(nodeVa,userIndexVa,true,false)
+            userNum++;
+            setTimeout(function (){changeNameStyle(nodeVa,userIndexVa)},10000)
+        }
+    }
+    function changeNameStyle(node,id){
+        var span1 = $("#userId"+id).remove();
+        createNode(node,id,false,true)
+        span1.css("transform","scale(0.6,0.6)");
+        //var html = span1.get(0).outerHTML;
+        //html = html.replaceAll("span1","span2");
+        //span1.replaceWith(html);
+    }
+
+
+</script>
+
+<div style="text-align:center;margin:10px 0; font:normal 14px/24px 'MicroSoft YaHei';color:#ffffff">
+<p></p>
+<p></p>
+</div>
+</body>
+</html>
